@@ -23,6 +23,7 @@ namespace ToDoApi.Models
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine("Hello queue");
             consumer.InitQueue("todo");
             string request = consumer.Receive();
             Message message = JsonConvert.DeserializeObject<Message>(request);
