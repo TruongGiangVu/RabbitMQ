@@ -18,12 +18,17 @@ namespace GateWayApi.Controllers
         {
             producer = new Producer();
         }
+        [HttpGet]
+        public IActionResult Index(){
+            return Ok("running");
+        }
         [HttpPost("create")]
         public IActionResult Create([FromBody] ToDo item){
             if(item == null)
                 return BadRequest("Not null");
             producer.InitQueue("todo");
-            producer.Publish(JsonConvert.SerializeObject(item));
+            Message message = new Message(){code ="00", type="post", item = item};
+            producer.Publish(JsonConvert.SerializeObject(message));
             return Ok(item);
         }
     }
