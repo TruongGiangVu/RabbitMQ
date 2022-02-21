@@ -36,6 +36,7 @@ namespace ToDoApi
             });
             services.AddDbContext<ToDoContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("DBContext")));
+            services.AddHostedService<TaskQueue>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,7 +4,7 @@ using RabbitMQ.Client.Events;
 using Newtonsoft.Json;
 using System.Text;
 
-namespace GateWayApi.Models
+namespace ToDoApi.Models
 {
     public class Consumer
     {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace GateWayApi.Models
+namespace ToDoApi.Models
 {
     public class TaskQueue : IHostedService
     {
