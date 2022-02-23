@@ -12,7 +12,6 @@ namespace ToDoApi.Models
         public IConnection _connection {get; set;}
         public IModel _channel {get; set;}
         public string queueName {get; set;}
-        public string exchangeName {get; set;}
 
         public Consumer()
         {
@@ -45,6 +44,35 @@ namespace ToDoApi.Models
             _channel.BasicConsume(queueName, true, consumer);
             Console.WriteLine("Receive: "+response.ToString());
             return response;
+        }
+        public void QueueBind(string exchangeName ="",string queueName = "",string routeKey =""){
+            if(queueName.Trim() == "")
+                queueName = _channel.QueueDeclare().QueueName;
+            _channel.QueueBind(queue: queueName,
+                              exchange: exchangeName,
+                              routingKey: routeKey);
+        }
+        public string InitConsumer()
+        {
+            string message = "";
+            var consumer = new EventingBasicConsumer(_channel);
+
+            // handle the Received event on the consumer
+            // this is triggered whenever a new message
+            // is added to the queue by the producer
+            consumer.Received += (model, ea) =>
+            {
+                // read the message bytes
+                var body = ea.Body.ToArray();
+
+                message = Encoding.UTF8.GetString(body);
+                
+                //Console.WriteLine(" [x] Received {0}", message);
+            };
+            _channel.BasicConsume(queue: this.queueName, 
+                                autoAck: true,
+                                consumer: consumer);
+            return message;
         }
     }
 }

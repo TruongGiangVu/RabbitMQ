@@ -44,7 +44,7 @@ namespace ToDoApi
                     "queue_todo",
                     "todo.*",
                     ExchangeType.Topic));
-            services.AddHostedService<TaskQueue>();
+            services.AddHostedService<TaskQueueTest>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

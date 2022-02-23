@@ -42,20 +42,21 @@ namespace ToDoApi.Models
         }
         public void InitExChange(string name = "hello"){
             exchangeName = name;
-            _channel.ExchangeDeclare(name, ExchangeType.Fanout);
+            _channel.ExchangeDeclare(name, ExchangeType.Topic);
         }
         public void ProducerExchange(string routeKey ="", string message ="hello world"){
             var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(exchange: "",
+            _channel.BasicPublish(exchange: exchangeName,
                                 routingKey: routeKey,
                                 basicProperties: null,
                                 body: body);
         }
-        public void QueueBind(string routeKey =""){
-            var queueName = _channel.QueueDeclare().QueueName;
+        public void QueueBind(string queueName = "",string routeKey =""){
+            if(queueName.Trim() == "")
+                queueName = _channel.QueueDeclare().QueueName;
             _channel.QueueBind(queue: queueName,
-                  exchange: this.exchangeName,
-                  routingKey: routeKey);
+                              exchange: exchangeName,
+                              routingKey: routeKey);
         }
         public string InitConsumer()
         {
