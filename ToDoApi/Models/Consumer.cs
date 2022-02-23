@@ -43,6 +43,7 @@ namespace ToDoApi.Models
             };
 
             _channel.BasicConsume(queueName, true, consumer);
+            Console.WriteLine("Receive: "+response.ToString());
             return response;
         }
     }

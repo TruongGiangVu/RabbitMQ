@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using GateWayApi.Models;
+using Plain.RabbitMQ;
+using RabbitMQ.Client;
 
 namespace GateWayApi
 {
@@ -33,6 +35,10 @@ namespace GateWayApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GateWayApi", Version = "v1" });
             });
+            services.AddSingleton<IConnectionProvider>(new ConnectionProvider("amqp://guest:guest@localhost:5672"));
+            services.AddSingleton<IPublisher>(x => new Publisher(x.GetService<IConnectionProvider>(),
+                    "exchange_demo",
+                    ExchangeType.Topic));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ToDoApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Plain.RabbitMQ;
+using RabbitMQ.Client;
 
 namespace ToDoApi
 {
@@ -36,6 +38,12 @@ namespace ToDoApi
             });
             services.AddDbContext<ToDoContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("DBContext")));
+            services.AddSingleton<IConnectionProvider>(new ConnectionProvider("amqp://guest:guest@localhost:5672"));
+            services.AddSingleton<ISubscriber>(x => new Subscriber(x.GetService<IConnectionProvider>(),
+                    "exchange_demo",
+                    "queue_todo",
+                    "todo.*",
+                    ExchangeType.Topic));
             services.AddHostedService<TaskQueue>();
         }
 

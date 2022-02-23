@@ -10,34 +10,58 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Plain.RabbitMQ;
+using Microsoft.Extensions.Configuration;
 
 namespace ToDoApi.Models
 {
     public class TaskQueue : IHostedService
     {
-        Consumer consumer = new Consumer();
         public ToDoContext _context { get; set; }
-        public TaskQueue(IServiceScopeFactory factory)
+        private readonly ISubscriber subscriber;
+        private readonly IConfiguration _config;
+        public TaskQueue(ISubscriber subscriber,IServiceScopeFactory factory, IConfiguration config)
         {
+            this.subscriber = subscriber;
             _context = factory.CreateScope().ServiceProvider.GetRequiredService<ToDoContext>();
+            //string a = factory.CreateScope().ServiceProvider.GetRequiredService<>();
+            _config = config;
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Hello queue");
-            consumer.InitQueue("todo");
-            string request = consumer.Receive();
-            Message message = JsonConvert.DeserializeObject<Message>(request);
-            if(message != null && message.type == "post"){
-                if(!_context.ToDos.Any(p => p.Id == message.item.Id)){
-                     _context.ToDos.AddAsync(message.item);
-                    _context.SaveChangesAsync();
-                }
-            }
+            
+            subscriber.Subscribe(ProcessMessage);
             return Task.CompletedTask;
             //throw new NotImplementedException();
         }
         private bool ProcessMessage(string message, IDictionary<string, object> headers)
         {
+            Console.WriteLine("Hello queue " +_config.GetValue<string>("AppSettings:Key"));
+            Console.WriteLine("task queue: " + message.ToString());
+            Message myMessage = JsonConvert.DeserializeObject<Message>(message);
+            
+            if(myMessage != null && myMessage.type == "post"){
+                if(!_context.ToDos.Any(p => p.Id == myMessage.item.Id)){
+                     _context.ToDos.AddAsync(myMessage.item);
+                    _context.SaveChangesAsync();
+                }
+            }
+            if(myMessage != null && myMessage.type == "put"){
+                ToDo todo = _context.ToDos.Where(p => p.Id == myMessage.item.Id).FirstOrDefault();
+                if (todo != null)
+                {
+                    _context.Entry(todo).CurrentValues.SetValues(myMessage.item);
+                    _context.SaveChangesAsync();
+                }     
+            }
+            if(myMessage != null && myMessage.type == "delete"){
+                ToDo todo = _context.ToDos.Where(p => p.Id == myMessage.item.Id).FirstOrDefault();
+                if (todo != null)
+                {
+                    _context.ToDos.Remove(todo);
+                    _context.SaveChangesAsync();
+                }    
+            }
             return true;
         }
 

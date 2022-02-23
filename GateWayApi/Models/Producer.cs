@@ -33,7 +33,7 @@ namespace GateWayApi.Models
         }
         public void Publish(string message = "Hello world"){
             var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(exchange: "",
+            _channel.BasicPublish(exchange: "exchange_demo",
                                 routingKey: this.queueName,
                                 basicProperties: null,
                                 body: body);
