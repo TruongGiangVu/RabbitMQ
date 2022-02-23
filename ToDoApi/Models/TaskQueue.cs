@@ -36,7 +36,7 @@ namespace ToDoApi.Models
         }
         private bool ProcessMessage(string message, IDictionary<string, object> headers)
         {
-            Console.WriteLine("Hello queue " +_config.GetValue<string>("AppSettings:Key"));
+            //Console.WriteLine("Hello queue " +_config.GetValue<string>("AppSettings:Key"));
             Console.WriteLine("task queue: " + message.ToString());
             Message myMessage = JsonConvert.DeserializeObject<Message>(message);
             
