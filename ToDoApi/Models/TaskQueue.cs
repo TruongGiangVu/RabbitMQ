@@ -24,7 +24,6 @@ namespace ToDoApi.Models
         {
             this.subscriber = subscriber;
             _context = factory.CreateScope().ServiceProvider.GetRequiredService<ToDoContext>();
-            //string a = factory.CreateScope().ServiceProvider.GetRequiredService<>();
             _config = config;
         }
         public Task StartAsync(CancellationToken cancellationToken)
