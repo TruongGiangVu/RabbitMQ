@@ -36,15 +36,16 @@ namespace ToDoApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDoApi", Version = "v1" });
             });
+            services.AddCors();
             services.AddDbContext<ToDoContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("DBContext")));
-            services.AddSingleton<IConnectionProvider>(new ConnectionProvider("amqp://guest:guest@localhost:5672"));
-            services.AddSingleton<ISubscriber>(x => new Subscriber(x.GetService<IConnectionProvider>(),
-                    "exchange_demo",
-                    "queue_todo",
-                    "todo.*",
-                    ExchangeType.Topic));
-            services.AddHostedService<TaskQueueTest>();
+            // services.AddSingleton<IConnectionProvider>(new ConnectionProvider("amqp://guest:guest@localhost:5672"));
+            // services.AddSingleton<ISubscriber>(x => new Subscriber(x.GetService<IConnectionProvider>(),
+            //         "exchange_demo",
+            //         "queue_todo",
+            //         "todo.*",
+            //         ExchangeType.Topic));
+            //services.AddHostedService<TaskQueueTest>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +57,13 @@ namespace ToDoApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDoApi v1"));
             }
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()
+            ); // allow credentials
 
             app.UseHttpsRedirection();
 

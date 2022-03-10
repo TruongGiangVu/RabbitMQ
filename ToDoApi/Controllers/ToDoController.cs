@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ToDoApi.Controllers
 {
     [ApiController]
+    //[Produces("application/json")]
     [Route("[controller]")]
     public class ToDoController : ControllerBase
     {
