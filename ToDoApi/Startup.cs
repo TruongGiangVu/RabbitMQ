@@ -30,13 +30,13 @@ namespace ToDoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDoApi", Version = "v1" });
             });
-            services.AddCors();
+            
             services.AddDbContext<ToDoContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("DBContext")));
             // services.AddSingleton<IConnectionProvider>(new ConnectionProvider("amqp://guest:guest@localhost:5672"));
@@ -58,6 +58,10 @@ namespace ToDoApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDoApi v1"));
             }
 
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
             app.UseCors(x => x
                 .AllowAnyMethod()
                 .AllowAnyHeader()
@@ -65,9 +69,6 @@ namespace ToDoApi
                 .AllowCredentials()
             ); // allow credentials
 
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
 
             app.UseAuthorization();
 
