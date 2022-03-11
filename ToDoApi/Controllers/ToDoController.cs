@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ToDoApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 
 namespace ToDoApi.Controllers
 {
     [ApiController]
     //[Produces("application/json")]
+    //[EnableCors("AnyOrigin")]  
     [Route("[controller]")]
     public class ToDoController : ControllerBase
     {
