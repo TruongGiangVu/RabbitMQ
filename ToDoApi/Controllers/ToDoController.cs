@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using ToDoApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cors;
+using ToDoApi.Log4net;
 
 namespace ToDoApi.Controllers
 {
@@ -23,11 +24,13 @@ namespace ToDoApi.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> GetAll(){
+            Logger.Info("Get All");
             var db = await _context.ToDos.ToArrayAsync();
             return Ok(db);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id){
+            Logger.Info($"Get by id {id}");
             var item = await _context.ToDos.Where(p => p.Id == id).FirstOrDefaultAsync();
             if(item == null)
                 return Ok("Not found");
@@ -40,6 +43,7 @@ namespace ToDoApi.Controllers
             }
             await _context.ToDos.AddAsync(item);
             await _context.SaveChangesAsync();
+            Logger.Info($"Create {item.ToString()}");
             return Ok(item);
         }
         [HttpPut]
@@ -53,6 +57,7 @@ namespace ToDoApi.Controllers
                 return BadRequest("Item not exist");
             }
             await _context.SaveChangesAsync();
+            Logger.Info($"Update {item.ToString()}");
             return Ok(item);
         }
         [HttpDelete]
@@ -62,6 +67,7 @@ namespace ToDoApi.Controllers
             {
                 _context.ToDos.Remove(todo);
                 await _context.SaveChangesAsync();
+                Logger.Info($"Delete {todo.ToString()}");
                 return Ok(todo);
             }
             else{
