@@ -24,7 +24,7 @@ namespace ToDoApi.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> GetAll(){
-            Logger.Info("Get All");
+            Logger.Info("Get Allrgdkfgjgkfdjfksdfkdfkdfmk");
             var db = await _context.ToDos.ToArrayAsync();
             return Ok(db);
         }
